@@ -12,14 +12,23 @@ const registerUser = asyncHandler(async (req, res) => {
   ) {
     throw new ApiError(400, "All Fields Required");
   }
-  const exitedUser = User.findOne({
-    $or: [username, email],
+  const exitedUser = await User.findOne({
+    $or: [{ username }, { email }],
   });
   if (exitedUser) {
     throw new ApiError(409, "Username and email already exited");
   }
   const avatarImageLocalPath = req.files?.avatar[0].path; //req.files this files we are getting from multer
-  const coverImageLocalPath = req.files?.coverImage[0].path;
+  //const coverImageLocalPath = req.files?.coverImage[0].path;
+  //console.log(req.files);
+  let coverImageLocalPath;
+  if (
+    req.files &&
+    Array.isArray(req.files.coverImage) &&
+    req.files.coverImage.length > 0
+  ) {
+    coverImageLocalPath = req.files.coverImage[0].path;
+  }
   if (!avatarImageLocalPath) {
     throw new ApiError(400, "Avatar field required");
   }
@@ -30,7 +39,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
   const user = await User.create({
     fullname,
-    avatar: avatar.url,
+    avatar: avatar?.url,
     coverImage: coverImg?.url || "",
     email,
     password,
