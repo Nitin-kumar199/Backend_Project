@@ -16,6 +16,6 @@ app.use(cookieParser());
 import userRouter from "./routes/user.routes.js";
 
 app.use("/api/v1/users", userRouter);
-//THIS IS THE PREFIX==>>http://localhost:/api/v1/users
+//THIS IS THE PREFIX==>>http://localhost:3000/api/v1/users
 
 export { app };
